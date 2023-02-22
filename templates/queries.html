@@ -1,0 +1,54 @@
+<h5>Salesman Earn Max Commission</h5>
+<table class="table table-hover table-secondary table-sm">
+    <thead>
+    <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Max Commission</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for n in max_com %}
+        <tr>
+            <td>{{ n.Salesmen__full_name }}</td>
+            <td>{{ n.commission|floatformat:-2 }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<h5>Customer Less Purchase</h5>
+<table class="table table-hover table-secondary table-sm">
+    <thead>
+    <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Less Purchase</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for n in less_pur %}
+        <tr>
+            <td>{{ n.customer__name }}</td>
+            <td>{{ n.purchase|floatformat:-2 }}</td>
+        </tr>
+    {% endfor %}
+    {{ total_cost }}
+    </tbody>
+</table>
+<h5>Salesmen Total Sales</h5>
+<table class="table table-hover table-secondary table-sm">
+    <thead>
+    <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Total Sales</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for n in total_sales %}
+        <tr>
+            <td>{{ n.Salesmen__full_name }}</td>
+            <td>{{ n.sales|floatformat:-2 }}</td>
+        </tr>
+    {% endfor %}
+    {{ total_cost }}
+    </tbody>
+</table>

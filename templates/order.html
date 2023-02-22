@@ -1,0 +1,21 @@
+<h5>Order</h5>
+<table class="table table-hover table-secondary table-sm">
+    <thead>
+    <tr>
+        <th scope="col">Order Id</th>
+        <th scope="col">Customer</th>
+        <th scope="col">Product Name</th>
+        <th scope="col">Price</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for n in order_detail %}
+        <tr>
+            <th scope="row">{{ n.orders }}</th>
+            <td>{{ n.orders.customer.name }}</td>
+            <td>{{ n.products.title }}</td>
+            <td>{{ n.products.price }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

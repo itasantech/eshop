@@ -1,0 +1,28 @@
+{% load crispy_forms_tags %}
+<form class="form-inline" method="get" action="{% url 'accounts:index' %}">
+    <h4>Salesman</h4> {{ form | crispy }}
+    <input type="submit" value="submit" class="btn btn-primary"/>
+</form>
+<h5>Salesman List</h5>
+<table class="table table-hover table-secondary table-sm">
+    <thead>
+    <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Name</th>
+        <th scope="col">City</th>
+        <th scope="col">Commission</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for n in salesman %}
+        <tr>
+            <th scope="row">{{ n.id }}</th>
+            <td>{{ n.full_name }}</td>
+            <td>{{ n.city }}</td>
+            <td>{{ n.max_commission }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+

@@ -1,0 +1,19 @@
+<h5>Product</h5>
+<table class="table table-hover table-secondary table-sm">
+    <thead>
+    <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Name</th>
+        <th scope="col">Price</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for n in product %}
+        <tr>
+            <th scope="row">{{ n.id }}</th>
+            <td>{{ n.title }}</td>
+            <td>{{ n.price }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

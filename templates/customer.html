@@ -1,0 +1,21 @@
+<h5>Customer</h5>
+<table class="table table-hover table-secondary table-sm">
+    <thead>
+    <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Name</th>
+        <th scope="col">City</th>
+        <th scope="col">Grade</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for n in customer %}
+        <tr>
+            <th scope="row">{{ n.id }}</th>
+            <td>{{ n.name }}</td>
+            <td>{{ n.city }}</td>
+            <td>{{ n.grade }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

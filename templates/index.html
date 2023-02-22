@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+
+{% block body %}
+    <div class="row">
+        <div>{% include 'total_count.html' %}</div>
+        <div class="col-12">
+            {% include 'salesman.html' %}
+            {#            {% include 'order_detail.html' %}#}
+        </div>
+        {#        <div class="col-sm-12 col-lg-6">#}
+        {#            {% include 'customer.html' %}#}
+        {#            {% include 'product.html' %}#}
+        {#        </div>#}
+        {#        <div class="col-sm-12 col-lg-6">#}
+        {#            {% include 'queries.html' %}#}
+        {#        </div>#}
+    </div>
+
+
+{% endblock body %}

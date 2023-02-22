@@ -1,0 +1,36 @@
+<h5>Order Detail</h5>
+<table class="table table-hover table-secondary table-sm">
+    <thead>
+    <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Order Id</th>
+        <th scope="col">Customer</th>
+        <th scope="col">Product Name</th>
+        <th scope="col">Price</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Total Price</th>
+        <th scope="col">Order Date</th>
+        <th scope="col">Salesman</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for n in order_details %}
+        <tr>
+            <th scope="row">{{ n.id }}</th>
+            <td> {{ n.orders.order_id }}</td>
+            <td>{{ n.orders.customer.name }}</td>
+            <td>{{ n.products.title }}</td>
+            <td>{{ n.products.price }}</td>
+            <td>{{ n.orders.quantity }}</td>
+            <td>{{ n.orders.total_price }}</td>
+            <td>{{ n.orders.order_date }}</td>
+            <td>{{ n.orders.Salesmen.full_name }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+{#    {% for p in order_details.all %}#}
+{#        {{ p.products.title }}#}
+{#    {% empty %}#}
+{#        No products!#}
+{#    {% endfor %}#}
+</table>
