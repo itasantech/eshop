@@ -1,0 +1,8 @@
+README FILE
+
+# celery worker queue
+celery -A alltestproject worker -l info -P gevent
+# celery beat queue
+celery -A alltestproject beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+#Get the container ID and run the command.
+docker exec -it container_id python manage.py createsuperuser
