@@ -9,6 +9,7 @@ from decimal import Decimal
 from rest_framework.response import Response
 
 from testapp.models import Customer, Salesman, Order, OrderProduct, Product
+from django.utils.translation import gettext_lazy as _
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -157,7 +158,46 @@ class CustomerLessPurchaseSerializer(serializers.Serializer):
         qs = CustomerCustomSerializer(many=True, read_only=True, instance=[query]).data
         return obj['id'], qs
         # def get_grade(self, instance):
+
+
 #     if instance.grade < 20:
 #         return "less then 20"
 #     elif instance.grade < 60:
 #         return "less then 60"
+
+
+class EventSerializer(serializers.Serializer):
+    id = serializers.CharField(required=False)
+    summary = serializers.CharField(max_length=250)
+    description = serializers.CharField(required=False)
+    attendees = serializers.ListField(allow_null=True)
+    # start = serializers.DateTimeField()
+    # end = serializers.DateTimeField()
+
+
+from datetime import datetime, timedelta
+
+
+class EventsSerializer(serializers.Serializer):
+    summary = serializers.CharField()
+    start_time = serializers.DateTimeField(input_formats=['iso-8601'])
+    end_time = serializers.DateTimeField(input_formats=['iso-8601'])
+
+    def create(self, validated_data):
+        summary = validated_data['summary']
+        start_time = validated_data['start_time'].replace(tzinfo=None)
+        end_time = validated_data['end_time'].replace(tzinfo=None)
+        return {
+            'summary': summary,
+            'start': {
+                'dateTime': start_time.isoformat(),
+                'timeZone': 'UTC',
+            },
+            'end': {
+                'dateTime': end_time.isoformat(),
+                'timeZone': 'UTC',
+            },
+            'reminders': {
+                'useDefault': True,
+            },
+        }

@@ -16,4 +16,7 @@ urlpatterns = [
     path('customer-unique-grades-commission', views.CustomerUniqueGradesCommission.as_view(),
          name='customer-unique-grades-commission'),
     path('maxval', views.max_val, name='maxval'),
+    path('datacache', views.TestCacheView.as_view(), name='datacache'),
+    path('event', views.GoogleCalendarEvents.as_view(), name='event'),
+    path('create-event/', views.create_event),
 ]

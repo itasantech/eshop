@@ -4,29 +4,30 @@ from django.db import models
 from datetime import date
 from django.db import models
 from django.db.models import Sum, F
+from django.utils.translation import gettext_lazy as _
 
 
 class Salesman(models.Model):
-    full_name = models.CharField(max_length=100)
-    city = models.TextField()
-    commission = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    full_name = models.CharField(_('full_name'), max_length=100)
+    city = models.TextField(_('city'))
+    commission = models.DecimalField(_('commission'), max_digits=5, decimal_places=2, default=0)
 
     def __str__(self):
         return self.full_name
 
 
 class Customer(models.Model):
-    name = models.CharField(max_length=200)
-    city = models.TextField()
-    grade = models.IntegerField()
+    name = models.CharField(_('name'), max_length=200)
+    city = models.TextField(_('city'))
+    grade = models.IntegerField(_('grade'))
 
     def __str__(self):
         return self.name
 
 
 class Product(models.Model):
-    title = models.CharField(max_length=100)
-    price = models.DecimalField(max_digits=20, decimal_places=2, default=0)
+    title = models.CharField(_('title'), max_length=100)
+    price = models.DecimalField(_('price'), max_digits=20, decimal_places=2, default=0)
 
     def __str__(self):
         return self.title
@@ -36,10 +37,10 @@ class Product(models.Model):
 
 
 class Order(models.Model):
-    order_id = models.AutoField(primary_key=True)
-    order_date = models.DateField(default=date.today)
-    quantity = models.PositiveIntegerField(default=0)
-    total_price = models.DecimalField(max_digits=20, decimal_places=2, default=0)
+    order_id = models.AutoField(_('order_id'), primary_key=True)
+    order_date = models.DateField(_('order_date'), default=date.today)
+    quantity = models.PositiveIntegerField(_('quantity'), default=0)
+    total_price = models.DecimalField(_('total_price'), max_digits=20, decimal_places=2, default=0)
     customer = models.ForeignKey(Customer, related_name='customers', on_delete=models.CASCADE)
     Salesmen = models.ForeignKey(Salesman, related_name='Salesmen', on_delete=models.CASCADE)
     products = models.ManyToManyField(Product, related_name='order_detail', through='OrderProduct')

@@ -1,11 +1,16 @@
 import json
+from datetime import datetime
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.decorators import method_decorator
+from django.utils.timezone import now
 from django.views.generic import TemplateView, ListView
 from django_filters.rest_framework import DjangoFilterBackend
+from googleapiclient.errors import HttpError
+from rest_framework.decorators import api_view
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 from .filters import SalesmanFilter
@@ -16,7 +21,8 @@ from rest_framework import viewsets, status, generics, permissions
 from testapp.serializers import UserSerializer, CustomerSerializer, \
     OrderSerializer, ProductSerializer, SalesmanSerializer, SalesmanCommissionSerializer, \
     CustomerLessPurchaseSerializer, SalesmanMaxSalesSerializer, SalesmanSepOctCommissionSerializer, \
-    SalesmanSepCommissionSerializer, CustomerCityHighestCommissionSerializer, CustomerUniqueGradesCommissionSerializer
+    SalesmanSepCommissionSerializer, CustomerCityHighestCommissionSerializer, CustomerUniqueGradesCommissionSerializer, \
+    EventSerializer
 from .tasks import *
 from django.conf import settings
 from django.core.cache.backends.base import DEFAULT_TIMEOUT
@@ -45,6 +51,8 @@ class Index(ListView):
         self.filterset = SalesmanFilter(self.request.GET, queryset=queryset)
         return self.filterset.qs
 
+    # return HttpResponse(json.dumps(data_cache))
+
     # def get_context_data(self, **kwargs):
     #     context = super().get_context_data(**kwargs)
     #     context['form'] = self.filterset.form
@@ -68,6 +76,21 @@ class Index(ListView):
         context['total_product'] = Product.objects.all().count()
         context['form'] = self.filterset.form
         return context
+
+
+class TestCacheView(APIView):
+    def get(self, request):
+        if 'id' in cache:
+            obj = cache.get('id')
+            print('form cache')
+            return Response(obj)
+        else:
+            result = Salesman.objects.values('id').annotate(
+                max_commission=Sum(F('Salesmen__products__price') * F('Salesmen__quantity') * F('commission')) / 100)
+            abc = SalesmanCommissionSerializer(result, many=True).data
+            cache.set('id', abc, timeout=60)
+            print('not from cache')
+            return Response(abc)
 
 
 def max_val(request):
@@ -331,3 +354,69 @@ class ApiRoot(APIView):
             'customer-unique-grades-commission': reverse('accounts:customer-unique-grades-commission', request=request,
                                                          format=format),
         })
+
+
+import datetime
+from datetime import timedelta
+
+import pytz
+import os.path
+from django.http import JsonResponse
+
+SCOPES = ['https://www.googleapis.com/auth/calendar']
+JSON_FILEPATH = os.path.join('../credentials.json')
+REDIRECT_URL = 'http://127.0.0.1:8000/'
+
+service_account_email = "INSERT_HERE"
+CLIENT_SECRETS_FILE = 'credentials.json'
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
+import datetime
+
+
+class GoogleCalendarEvents(APIView):
+    def get(self, request):
+        credentials = None
+        # Get the credentials
+        credentials = Credentials.from_authorized_user_file('../token.json', SCOPES)
+        # Build the service object
+        service = build('calendar', 'v3', credentials=credentials)
+        # Call the Calendar API to get the next 10 events from the primary calendar
+        now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
+        events_result = service.events().list(calendarId='primary', timeMin=now,
+                                              maxResults=10,
+                                              singleEvents=True,
+                                              orderBy='startTime').execute()
+        events = events_result.get('items', [])
+        serializer = EventSerializer(events_result['items'], many=True)
+        # Return the events as a JSON response
+        if not events:
+            return Response({'message': 'No upcoming events found.'})
+        else:
+            return Response(serializer.data)
+
+
+from google.oauth2.credentials import Credentials
+from googleapiclient.errors import HttpError
+from googleapiclient.discovery import build
+from rest_framework.decorators import api_view, parser_classes
+from rest_framework.response import Response
+from rest_framework.parsers import JSONParser
+from .serializers import EventsSerializer
+
+
+@api_view(['POST'])
+@parser_classes([JSONParser])
+def create_event(request):
+    credentials = Credentials.from_authorized_user_info('../token.json', SCOPES)
+    service = build('calendar', 'v3', credentials=credentials)
+    serializer = EventsSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    event_body = serializer.save()
+    try:
+        event = service.events().insert(calendarId='primary', body=event_body).execute()
+        return Response(event)
+    except HttpError as error:
+        return Response({'error': str(error)})

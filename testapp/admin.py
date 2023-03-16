@@ -1,8 +1,23 @@
 from django.contrib import admin
 from django.db.models import Count, Sum, F
-
+from modeltranslation.admin import TranslationAdmin, TranslationTabularInline
 # Register your models here.
 from .models import Customer, Salesman, Order, Product, OrderProduct
+
+
+# @admin.register(Salesman)
+class SalesmanAdmin(TranslationAdmin):
+    model = Salesman
+
+
+# @admin.register(Customer)
+class CustomerAdmin(TranslationAdmin):
+    model = Customer
+
+
+# @admin.register(Product)
+class ProductAdmin(TranslationAdmin):
+    model = Product
 
 
 class OrderInline(admin.TabularInline):

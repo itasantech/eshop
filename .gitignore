@@ -1,3 +1,5 @@
 *.env
 *.yml
 .dockerignore
+.token.json
+.credentials.json
